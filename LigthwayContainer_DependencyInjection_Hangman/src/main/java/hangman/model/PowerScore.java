@@ -1,9 +1,13 @@
 package hangman.model;
 
+import Excepciones.HangmanException;
+
 public class PowerScore implements GameScore {
 
 	@Override
-	public int calculateScore(int correctCount, int incorrectCount) {
+	public int calculateScore(int correctCount, int incorrectCount) throws HangmanException {
+		if(incorrectCount > 25) throw new HangmanException(HangmanException.EXCESO_ERROR);
+		if((incorrectCount + correctCount)>27) throw new HangmanException(HangmanException.EXCESO_TOTAL);
 		int puntaje = 0;
 		for(int i=1; i <= correctCount; i++) {
 			puntaje+=Math.pow(5, i);
