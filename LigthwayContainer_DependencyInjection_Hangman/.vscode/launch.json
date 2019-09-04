@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - SwingProject",
+            "request": "launch",
+            "mainClass": "hangman.SwingProject",
+            "projectName": "Hangman"
+        }
+    ]
+}

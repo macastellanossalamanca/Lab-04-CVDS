@@ -13,92 +13,104 @@
 package hangman.model;
 
 import hangman.model.dictionary.HangmanDictionary;
+import hangman.setup.guice.HangmanFactoryServices;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
+import Excepciones.HangmanException;
 
 public class GameModel {
     private int incorrectCount;
     private int correctCount;
     private LocalDateTime dateTime;
-    private int gameScore;
+    private GameScore gameScore;
     private int[] lettersUsed;
-    
-    
+
     private HangmanDictionary dictionary;
-    
+
     private Scanner scan;
     private String randomWord;
     private char[] randomWordCharArray;
-    
-    
-   
-    public GameModel(HangmanDictionary dictionary){
-        //this.dictionary = new EnglishDictionaryDataSource();
-        this.dictionary=dictionary;
+
+    public GameModel(HangmanDictionary dictionary) {
+        Injector in = Guice.createInjector(new HangmanFactoryServices());
+        // this.dictionary = new EnglishDictionaryDataSource();
+        this.dictionary = dictionary;
         randomWord = selectRandomWord();
         randomWordCharArray = randomWord.toCharArray();
         incorrectCount = 0;
         correctCount = 0;
-        gameScore = 100;
-        
-    }
-    
-    //method: reset
-    //purpose: reset this game model for a new game
-    public void reset(){
-        randomWord = selectRandomWord();
-        randomWordCharArray = randomWord.toCharArray();
-        incorrectCount = 0;
-        correctCount = 0;
-        gameScore = 100;
+        gameScore = in.getInstance(GameScore.class);
+
     }
 
-    //setDateTime
-    //purpose: sets game date/time to system date/time
+    // method: reset
+    // purpose: reset this game model for a new game
+    public void reset() {
+        randomWord = selectRandomWord();
+        randomWordCharArray = randomWord.toCharArray();
+        incorrectCount = 0;
+        correctCount = 0;
+        Injector in = Guice.createInjector(new HangmanFactoryServices());
+        gameScore = in.getInstance(GameScore.class);
+    }
+
+    // setDateTime
+    // purpose: sets game date/time to system date/time
     public void setDateTime() {
         this.dateTime = LocalDateTime.now();
     }
-    
-    //method: makeGuess
-    //purpose: check if user guess is in string. Return a
+
+    // method: makeGuess
+    // purpose: check if user guess is in string. Return a
     // list of positions if character is found in string
-    public ArrayList<Integer> makeGuess(String guess){
+    public ArrayList<Integer> makeGuess(String guess) {
         char guessChar = guess.charAt(0);
         ArrayList<Integer> positions = new ArrayList<>();
-        for(int i = 0; i < randomWordCharArray.length; i++){
-            if(randomWordCharArray[i] == guessChar){
+        for (int i = 0; i < randomWordCharArray.length; i++) {
+            if (randomWordCharArray[i] == guessChar) {
                 positions.add(i);
             }
         }
-        if(positions.size() == 0){
+        if (positions.size() == 0) {
             incorrectCount++;
-            gameScore -= 10;
+
         } else {
             correctCount += positions.size();
         }
         return positions;
-        
+
     }
-    
-    //getDateTime
-    //purpose: returns current displayed date/time
+
+    // getDateTime
+    // purpose: returns current displayed date/time
     public String getDateTime() {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MMM-dd-uuuu hh:mm:ss a");
         return dtf.format(dateTime);
     }
 
-    //setScore
-    //purpose: sets score value to points
-    public void setScore(int score) {
+    // setScore
+    // purpose: sets score value to points
+    public void setScore(GameScore score) {
         this.gameScore = score;
     }
-    
-    //getScore
-    //purpose: returns current score value
+
+    // getScore
+    // purpose: returns current score value
     public int getScore() {
-        return gameScore;
+        try {
+            return gameScore.calculateScore(correctCount, incorrectCount);
+        } catch (HangmanException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return 0;
+        }
+       
     }
 
     //name: selectRandomWord()
@@ -124,12 +136,18 @@ public class GameModel {
     //method: getGameScore
     //purpose: return current score
     public int getGameScore() {
-        return gameScore;
+        try {
+            return gameScore.calculateScore(correctCount, incorrectCount);
+        } catch (HangmanException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return 0;
+        }
     }
 
     //method: setGameScore
     //purpose: set current game score
-    public void setGameScore(int gameScore) {
+    public void setGameScore(GameScore gameScore) {
         this.gameScore = gameScore;
     }
     

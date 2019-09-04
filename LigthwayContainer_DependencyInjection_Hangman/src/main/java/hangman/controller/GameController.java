@@ -90,7 +90,7 @@ public class GameController{
             });
         }
 
-        model.setScore(100);
+        //model.setScore(100);
                 
         panel.addAncestorListener(new AncestorListener(){
             @Override
@@ -120,7 +120,7 @@ public class GameController{
         panel.getSkipButton().addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent ae) {
-                model.setScore(0);
+                //model.setScore(0);
                 rootController.changeVisibleCard(GUI.GAME_OVER_KEY);
             }
             
